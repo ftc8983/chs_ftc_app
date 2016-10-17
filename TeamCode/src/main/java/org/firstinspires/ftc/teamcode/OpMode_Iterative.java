@@ -116,8 +116,8 @@ public class OpMode_Iterative extends OpMode
         telemetry.addData("Status", "Running: " + runtime.toString());
 
         // eg: Run wheels in tank mode (note: The joystick goes negative when pushed forwards)
-        leftWheel.setPower(-gamepad1.left_stick_y);
-        rightWheel.setPower(-gamepad1.right_stick_y);
+        leftWheel.setPower(-.99);//-gamepad1.left_stick_y);
+        rightWheel.setPower(-.99);//-gamepad1.right_stick_y);
     }
 
     /*

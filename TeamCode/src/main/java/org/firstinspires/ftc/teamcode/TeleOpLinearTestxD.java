@@ -95,14 +95,11 @@ public class TeleOpLinearTestxD extends LinearOpMode {
         while (opModeIsActive()) {
 
             // eg: Run wheels in tank mode (note: The joystick goes negative when pushed forwards)
-            leftWheel.setPower(-gamepad1.left_stick_y);
-            rightWheel.setPower(-gamepad1.right_stick_y);
+            leftWheel.setPower(-.99);//-gamepad1.left_stick_y);
+            rightWheel.setPower(-.99);//-gamepad1.right_stick_y);
 
-            // eg: Run wheels in tank mode (note: The joystick goes negative when pushed forwards)
-            leftWheel.setPower(-gamepad1.left_stick_y);
-            rightWheel.setPower(-gamepad1.right_stick_y);
             telemetry.addData("Right stick y value: " + gamepad1.right_stick_y, "\n" );
-            telemetry.addData("Right wheel power: " + rightWheel, "\n" );
+            telemetry.addData("Right wheel power: " + rightWheel.getPower(), "\n" );
             telemetry.addData("Status", "Run Time: " + runtime.toString(), "\n");
             telemetry.update();
             idle(); // Always call idle() at the bottom of your while(opModeIsActive()) loop
