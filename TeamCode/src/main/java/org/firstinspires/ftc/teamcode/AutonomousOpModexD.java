@@ -40,18 +40,7 @@ import com.qualcomm.robotcore.hardware.LegacyModule;
 import com.qualcomm.robotcore.hardware.ServoController;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-/**
- * This file contains an minimal example of a Linear "OpMode". An OpMode is a 'program' that runs in either
- * the autonomous or the teleop period of an FTC match. The names of OpModes appear on the menu
- * of the FTC Driver Station. When an selection is made from the menu, the corresponding OpMode
- * class is instantiated on the Robot Controller and executed.
- *
- * This particular OpMode just executes a basic Tank Drive Teleop for a PushBot
- * It includes all the skeletal structure that all linear OpModes contain.
- *
- * Use Android Studios to Copy this Class, and Paste it into your team's code folder with a new name.
- * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
- */
+
 
 @Autonomous(name="Template: Linear OpMode", group="Linear Opmode")  // @Autonomous(...) is the other common choice
 public class AutonomousOpModexD extends LinearOpMode {
@@ -91,12 +80,11 @@ public class AutonomousOpModexD extends LinearOpMode {
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
-            telemetry.addData("Status", "Run Time: " + runtime.toString());
-            telemetry.update();
 
             leftMotor.setPower(-.99);
             rightMotor.setPower(.99);
-
+            telemetry.addData("Status", "Run Time: " + runtime.toString());
+            telemetry.update();
             idle(); // Always call idle() at the bottom of your while(opModeIsActive()) loop
         }
     }
