@@ -42,7 +42,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 
 
-@Autonomous(name="Template: Linear OpMode", group="Linear Opmode")  // @Autonomous(...) is the other common choice
+@Autonomous(name="The REAL Autonomous", group="Linear Opmode")
 public class AutonomousOpModexD extends LinearOpMode {
 
     /* Declare OpMode members. */
@@ -68,6 +68,7 @@ public class AutonomousOpModexD extends LinearOpMode {
         rightMotor = hardwareMap.dcMotor.get("right motor");
         servoCtrl = hardwareMap.servoController.get("servo");
         legacyMod = hardwareMap.legacyModule.get("legacy module");
+        zipMotor = hardwareMap.dcMotor.get("zip motor");
 
         // eg: Set the drive motor directions:
         // "Reverse" the motor that runs backwards when connected directly to the battery
@@ -81,8 +82,9 @@ public class AutonomousOpModexD extends LinearOpMode {
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
 
-            leftMotor.setPower(-.99);
-            rightMotor.setPower(.99);
+            leftMotor.setPower(0.99);
+            //rightMotor must be negative
+            rightMotor.setPower(-0.99);
             telemetry.addData("Status", "Run Time: " + runtime.toString());
             telemetry.update();
             idle(); // Always call idle() at the bottom of your while(opModeIsActive()) loop

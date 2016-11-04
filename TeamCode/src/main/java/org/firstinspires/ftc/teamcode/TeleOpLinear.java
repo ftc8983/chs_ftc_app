@@ -56,7 +56,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 @TeleOp(name="Test Linear Op", group="Linear Opmode")  // @Autonomous(...) is the other common choice
 
-public class TeleOpLinearTestxD extends LinearOpMode {
+public class TeleOpLinear extends LinearOpMode {
 
     /* Declare OpMode members. */
     private ElapsedTime runtime = new ElapsedTime();
@@ -80,6 +80,7 @@ public class TeleOpLinearTestxD extends LinearOpMode {
         motorCtrl = hardwareMap.dcMotorController.get("motorcycle");
         leftMotor = hardwareMap.dcMotor.get("left motor");
         rightMotor = hardwareMap.dcMotor.get("right motor");
+        zipMotor = hardwareMap.dcMotor.get("zip motor");
         servoCtrl = hardwareMap.servoController.get("servo");
         legacyMod = hardwareMap.legacyModule.get("legacy module");
 
@@ -98,11 +99,12 @@ public class TeleOpLinearTestxD extends LinearOpMode {
             // eg: Run wheels in tank mode (note: The joystick goes negative when pushed forwards)
             leftMotor.setPower(-gamepad1.left_stick_y);
             rightMotor.setPower(gamepad1.right_stick_y);
-
+            if (gamepad1.a) zipMotor.setPower(1);
+            else zipMotor.setPower(0);
             telemetry.addData("Right stick y value: " + gamepad1.right_stick_y, "\n" );
             telemetry.addData("Status", "Run Time: " + runtime.toString(), "\n");
             telemetry.update();
-            idle(); // Always call idle() at the bottom of your while(opModeIsActive()) loop
+            idle(); // Let hardware catch up
         }
     }
 }

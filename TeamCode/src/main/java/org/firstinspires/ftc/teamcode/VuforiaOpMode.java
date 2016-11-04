@@ -19,18 +19,18 @@ public class VuforiaOpMode extends LinearOpMode{
 
     //Check out ConceptVuforiaNavigation.java in the samples folder for more info
     //Initialize vars for later
-    VuforiaLocalizer vuforiaLocalizer;
-    VuforiaLocalizer.Parameters parameters;
-    VuforiaTrackables visionTargets;
-    VuforiaTrackable target;
-    VuforiaTrackableDefaultListener listener;
+    private VuforiaLocalizer vuforiaLocalizer;
+    private VuforiaLocalizer.Parameters parameters;
+    private VuforiaTrackables visionTargets;
+    private VuforiaTrackable target;
+    private VuforiaTrackableDefaultListener listener;
 
-    OpenGLMatrix lastKnownLocation;
-    OpenGLMatrix phoneLocation;
+    private OpenGLMatrix lastKnownLocation;
+    private OpenGLMatrix phoneLocation;
 
-    float mmPerInch        = 25.4f;
-    float mmBotWidth       = 18 * mmPerInch;            // ... or whatever is right for your robot
-    float mmFTCFieldWidth  = (12*12 - 2) * mmPerInch;   // the FTC field is ~11'10" center-to-center of the glass panels
+    private float mmPerInch        = 25.4f;
+    private float mmBotWidth       = 18 * mmPerInch;            // ... or whatever is right for your robot
+    private float mmFTCFieldWidth  = (12*12 - 2) * mmPerInch;   // the FTC field is ~11'10" center-to-center of the glass panels
 
     public static final String VUFORIA_KEY = "AQWOTWn/////AAAAGYYjaW82j0AljSy59dLGoDU8VKmAt4XIbjgYUTVD9WDipRlj+YytZAlBbwjNUROHazUayVYQLeLvuAvkhX0mZnD4te8NBUH7/EsKCABr+GI5OZI6//qzJxpWIOenOlOSODCXwfWjIHuTfpRhz+mZxjhRMcXd7y0b6GCezGzjmivjtBm70P8WIQ48Za+Ii6OT/ybmi7WM7SIAE1MfWClI3lHOh4Y3pEb1WRb/gTxEVDq2yeBei78ivf1mP10kti7Q+XJ45t/xfIF2BYXyWovVqxZvMzuSJns4b9CMoR/E/YLaxuPvfgFRntck6XOhzAaExSbzvCLFIjxfoaoKg6agnNI0EM29SwVPuC9hq6+OjGgv";
 
@@ -45,7 +45,6 @@ public class VuforiaOpMode extends LinearOpMode{
 
         waitForStart();
         while (opModeIsActive()) {
-            /
             // /Set last known location of robot
             OpenGLMatrix latestLocation = listener.getUpdatedRobotLocation();
             //Set last known location if the robot does not see the vision targets
@@ -59,10 +58,11 @@ public class VuforiaOpMode extends LinearOpMode{
             telemetry.addData("Last Known Location ", formatMatrix(lastKnownLocation) );
 
             telemetry.update();
+            idle();
         }
     }
 
-    public void setupVuforia() {
+    private void setupVuforia() {
         parameters = new VuforiaLocalizer.Parameters(R.id.cameraMonitorViewId);
         //Set the license key
         parameters.vuforiaLicenseKey = VUFORIA_KEY;
@@ -83,14 +83,14 @@ public class VuforiaOpMode extends LinearOpMode{
         listener.setPhoneInformation(phoneLocation, parameters.cameraDirection);
     }
 
-    public OpenGLMatrix createMatrix(float x, float y, float z, float u, float v, float w) {
+    private OpenGLMatrix createMatrix(float x, float y, float z, float u, float v, float w) {
         //Makes matrix of robot location
         return OpenGLMatrix.translation(x, y, z).
                 multiplied(Orientation.getRotationMatrix(
                     AxesReference.EXTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES, u, v, w)
                 );
     }
-    String formatMatrix(OpenGLMatrix transformationMatrix) {
+    private String formatMatrix(OpenGLMatrix transformationMatrix) {
         return transformationMatrix.formatAsTransform();
     }
 
