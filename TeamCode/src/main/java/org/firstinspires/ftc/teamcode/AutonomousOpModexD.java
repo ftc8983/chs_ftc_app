@@ -64,9 +64,10 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
 @Autonomous(name="The REEAL Autonomous", group="Linear Opmode")
 public class AutonomousOpModexD extends LinearOpMode {
 
-    /* Declare OpMode members. */
-    ColorSensor colorSensor1;  // Hardware Device Object
-    ColorSensor colorSensorDown;  // Hardware Device Object
+    /******** Declare OpMode members. ********/
+
+    private ColorSensor colorSensor1;  // Hardware Device Object
+    private ColorSensor colorSensorDown;  // Hardware Device Object
 
     private ElapsedTime runtime = new ElapsedTime();
     private DcMotor leftMotor = null;
@@ -76,14 +77,14 @@ public class AutonomousOpModexD extends LinearOpMode {
     private ServoController servoCtrl = null;
     private LegacyModule legacyMod = null;
 
-    //Declare getter and setter for pause boolean singular
-    boolean singular = true;
+    //Declare getter and setter for pause boolean singular THOMAS: Obsoleted?
+    /*boolean singular = true;
     void setSingular(boolean sig){
         boolean singular = sig;
     }
     public boolean getSingular(){
         return singular;
-    }
+    }*/
 
 
     //*** Vuforia Initialization Stuff Below
@@ -110,6 +111,7 @@ public class AutonomousOpModexD extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
+        /****************************BEGIN OPMODE SETUP CODE***********************************/
         telemetry.addData("Status", "Initialized");
         telemetry.update();
 
@@ -131,7 +133,7 @@ public class AutonomousOpModexD extends LinearOpMode {
         // leftMotor.setDirection(DcMotor.Direction.FORWARD); // Set to REVERSE if using AndyMark motors
         // rightMotor.setDirection(DcMotor.Direction.REVERSE);// Set to FORWARD if using AndyMark motors
 
-     //** Color Sensor ruOpMode Stuff
+     //** Color Sensor runOpMode Stuff
         // hsvValues is an array that will hold the hue, saturation, and value information.
         float hsvValues[] = {0F,0F,0F};
 
@@ -151,10 +153,6 @@ public class AutonomousOpModexD extends LinearOpMode {
 
 
 
-
-
-
-
         //*** Vuforia runOpMode Stuff Below
         setupVuforia();
 
@@ -163,33 +161,28 @@ public class AutonomousOpModexD extends LinearOpMode {
         visionTargets.activate();
     //*** End of Vuforia runOpMode Stuff
 
-
-
-
-
-
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
-
-
         runtime.reset();
-
         // run until the end of the match (driver presses STOP)
+
+
+        /****************************BEGIN OPMODE RUNNING CODE***********************************/
         while (opModeIsActive()) {
             //pause for ten seconds on start
-            if(singular){
-                try {
-                    Thread.sleep(10000);
-                    setSingular(false);
-                } catch(InterruptedException ex) {
-                    Thread.currentThread().interrupt();
-                }
+            if(runtime.seconds() > 10) {
+                leftMotor.setPower(0.99);
+                //rightMotor must be negative
+                rightMotor.setPower(-0.99);
+            }
+            else {
+                leftMotor.setPower(0);
+                //rightMotor must be negative
+                rightMotor.setPower(0);
             }
 
 
          //** Color Sensor whileActive Stuff
-
-
             // convert the RGB values to HSV values.
             Color.RGBToHSV(colorSensor1.red(), colorSensor1.green(), colorSensor1.blue(), hsvValues);
 
@@ -211,17 +204,12 @@ public class AutonomousOpModexD extends LinearOpMode {
             });
          //** End of Color Sensor Stuff
 
-
-
-
          //*** Vuforia whileActive Stuff
             // /Set last known location of robot
             OpenGLMatrix latestLocation = listener.getUpdatedRobotLocation();
             //Set last known location if the robot does not see the vision targets
             if (latestLocation != null)
                 lastKnownLocation = latestLocation;
-
-
 
             //Print tracking data to terminal
             telemetry.addData("Tracking " + target.getName(), listener.isVisible() + "\n");
@@ -230,17 +218,15 @@ public class AutonomousOpModexD extends LinearOpMode {
 
 
 
-
-            leftMotor.setPower(0.99);
-            //rightMotor must be negative
-            rightMotor.setPower(-0.99);
             telemetry.addData("Status", "Run Time: " + runtime.toString());
+        //*** Prepare for next iteration of loop
             telemetry.update();
             idle(); // Always call idle() at the bottom of your while(opModeIsActive()) loop
+        //*** Ready for next iteration!
         }
     }
 
-
+/*******************************DECLARE VARIOUS OTHER METHODS BELOW********************************/
 
 
     //Vuforia Setup Method (duh)
@@ -266,12 +252,13 @@ public class AutonomousOpModexD extends LinearOpMode {
     }
 
     private OpenGLMatrix createMatrix(float x, float y, float z, float u, float v, float w) {
-        //Makes matrix of robot location
+        //Puts robot location into an openglmatrix. This is hardcore voodoo code.
         return OpenGLMatrix.translation(x, y, z).
                 multiplied(Orientation.getRotationMatrix(
                         AxesReference.EXTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES, u, v, w)
                 );
     }
+    //Formats openglmatrix to output to console
     private String formatMatrix(OpenGLMatrix transformationMatrix) {
         return transformationMatrix.formatAsTransform();
     }
