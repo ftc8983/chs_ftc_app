@@ -2,9 +2,12 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.vuforia.HINT;
+import com.vuforia.Vuforia;
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix;
+import org.firstinspires.ftc.robotcore.external.matrices.VectorF;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
@@ -21,8 +24,7 @@ public class VuforiaOpMode extends LinearOpMode{
     //Initialize vars for later
     private VuforiaLocalizer vuforiaLocalizer;
     private VuforiaLocalizer.Parameters parameters;
-    private VuforiaTrackables visionTargets;
-    private VuforiaTrackable target;
+    private VuforiaTrackables targets = vuforiaLocalizer.loadTrackablesFromAsset("FTC_2016-17");
     private VuforiaTrackableDefaultListener listener;
 
     private OpenGLMatrix lastKnownLocation;
@@ -41,10 +43,21 @@ public class VuforiaOpMode extends LinearOpMode{
 
         lastKnownLocation = createMatrix( 0, 0, 0, 0, 0, 0 );
 
-        visionTargets.activate();
+        targets.activate();
 
         waitForStart();
         while (opModeIsActive()) {
+            //Loop through targets and track each target.
+            for (VuforiaTrackable target : targets) {
+                OpenGLMatrix pose = ((VuforiaTrackableDefaultListener) target.getListener()).getPose();
+                if ( pose != null ) {
+                    VectorF translation = pose.getTranslation();
+                    telemetry.addData(target.getName() + "-Translation", translation);
+                    double degreesToTurn = Math.toDegrees(Math.atan2(translation.get(1), translation.get(2)));
+                    //Displays the number of degrees needed to turn to face teh bEaCoN!!
+                    telemetry.addData(target.getName() + "-Degrees", degreesToTurn);
+                }
+            }
             // /Set last known location of robot
             OpenGLMatrix latestLocation = listener.getUpdatedRobotLocation();
             //Set last known location if the robot does not see the vision targets
@@ -54,7 +67,7 @@ public class VuforiaOpMode extends LinearOpMode{
 
 
             //Print tracking data to terminal
-            telemetry.addData("Tracking " + target.getName(), listener.isVisible() + "\n");
+            telemetry.addData("Tracking " + targets.get(0).getName(), listener.isVisible() + "\n");
             telemetry.addData("Last Known Location ", formatMatrix(lastKnownLocation) );
 
             telemetry.update();
@@ -71,15 +84,17 @@ public class VuforiaOpMode extends LinearOpMode{
 
         //Set the vision target
         vuforiaLocalizer = ClassFactory.createVuforiaLocalizer(parameters);
-        visionTargets = vuforiaLocalizer.loadTrackablesFromAsset("FTC_2016-17");
+        Vuforia.setHint(HINT.HINT_MAX_SIMULTANEOUS_IMAGE_TARGETS, 4);
+        targets.get(0).setName("Wheels");
+        targets.get(1).setName("Tools");
+        targets.get(2).setName("Legos");
+        targets.get(3).setName("Gears");
 
-        target = visionTargets.get(0);
-        target.setName("Wheels Target");
-        target.setLocation(createMatrix(0, 0, 0, 0, 0, 0));
+        targets.get(0).setLocation(createMatrix(0, 0, 0, 0, 0, 0));
         //Set init location of phone on brobot
         phoneLocation = createMatrix(0, 0, 0, 0, 0, 0);
 
-        listener = (VuforiaTrackableDefaultListener) target.getListener();
+        listener = (VuforiaTrackableDefaultListener) targets.get(0).getListener();
         listener.setPhoneInformation(phoneLocation, parameters.cameraDirection);
     }
 
@@ -90,6 +105,7 @@ public class VuforiaOpMode extends LinearOpMode{
                     AxesReference.EXTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES, u, v, w)
                 );
     }
+
     private String formatMatrix(OpenGLMatrix transformationMatrix) {
         return transformationMatrix.formatAsTransform();
     }
