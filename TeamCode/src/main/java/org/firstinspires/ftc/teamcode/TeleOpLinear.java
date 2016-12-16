@@ -104,22 +104,37 @@ public class TeleOpLinear extends LinearOpMode {
             // eg: Run wheels in tank mode (note: The joystick goes negative when pushed forwards)
             leftMotor.setPower(-gamepad1.left_stick_y);
             rightMotor.setPower(gamepad1.right_stick_y);
-           try {
+            zipMotor.setPower(2*gamepad1.right_trigger);
+            zipMotor.setPower(-2*gamepad1.left_trigger);
+
+
+           /* Commenting out old zipMotor and kickMotor assignment
+            try {
                if (gamepad1.right_trigger>0) zipMotor.setPower(gamepad1.right_trigger);
-               if (gamepad1.left_trigger>0) zipMotor.setPower(gamepad1.left_trigger);
-               else zipMotor.setPower(0);
+               else {
+                   if (gamepad1.left_trigger > 0) zipMotor.setPower(gamepad1.left_trigger);
+                   else zipMotor.setPower(0);
+               }
            }
             catch(IllegalArgumentException eg){
                 throw eg;
             }
+            */
+
+
             try {
                 if (gamepad1.right_bumper) kickMotor.setPower(1);
-                if (gamepad1.left_bumper) kickMotor.setPower(-1);
-                else kickMotor.setPower(0);
+                else {
+                    if (gamepad1.left_bumper) kickMotor.setPower(-1);
+                    else kickMotor.setPower(0);
+                }
             }
+
             catch(IllegalArgumentException eg){
                 throw eg;
             }
+
+
             telemetry.addData("Right stick y value: " + gamepad1.right_stick_y, "\n" );
             telemetry.addData("Status", "Run Time: " + runtime.toString(), "\n");
             telemetry.update();
