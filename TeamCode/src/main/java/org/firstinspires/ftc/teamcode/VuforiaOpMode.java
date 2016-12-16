@@ -17,7 +17,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackableDefaultListener;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
 
-@Autonomous(name="Autonomous Mode", group="LinearOpMode")
+@Autonomous(name="Vuforia OpMode", group="LinearOpMode")
 public class VuforiaOpMode extends LinearOpMode{
 
     //Check out ConceptVuforiaNavigation.java in the samples folder for more info
@@ -47,8 +47,28 @@ public class VuforiaOpMode extends LinearOpMode{
 
         waitForStart();
         while (opModeIsActive()) {
+            // /Set last known location of robot
+            OpenGLMatrix latestLocation = createMatrix( 0, 0, 0, 0, 0, 0 );
+            //Set last known location if the robot does not see the vision targets
+            if (latestLocation != null)
+                lastKnownLocation = latestLocation;
+
             //Loop through targets and track each target.
+
             for (VuforiaTrackable target : targets) {
+                OpenGLMatrix pose = ((VuforiaTrackableDefaultListener) target.getListener()).getPose();
+                if ( pose != null ) {
+                    VectorF translation = pose.getTranslation();
+                    telemetry.addData(target.getName() + "-Translation", translation);
+                    //double degreesToTurn = Math.toDegrees(Math.atan2(translation.get(1), translation.get(2)));
+                    //Displays the number of degrees needed to turn to face teh bEaCoN!!
+                    //telemetry.addData(target.getName() + "-Degrees", degreesToTurn);
+                }
+                if ( pose == null) pose = lastKnownLocation;
+            }
+
+            /*for (VuforiaTrackable target : targets) {
+
                 OpenGLMatrix pose = ((VuforiaTrackableDefaultListener) target.getListener()).getPose();
                 if ( pose != null ) {
                     VectorF translation = pose.getTranslation();
@@ -57,14 +77,8 @@ public class VuforiaOpMode extends LinearOpMode{
                     //Displays the number of degrees needed to turn to face teh bEaCoN!!
                     telemetry.addData(target.getName() + "-Degrees", degreesToTurn);
                 }
-            }
-            // /Set last known location of robot
-            OpenGLMatrix latestLocation = listener.getUpdatedRobotLocation();
-            //Set last known location if the robot does not see the vision targets
-            if (latestLocation != null)
-                lastKnownLocation = latestLocation;
-
-
+                if ( pose == null ) pose = lastKnownLocation;
+            }*/
 
             //Print tracking data to terminal
             telemetry.addData("Tracking " + targets.get(0).getName(), listener.isVisible() + "\n");
@@ -87,10 +101,12 @@ public class VuforiaOpMode extends LinearOpMode{
         Vuforia.setHint(HINT.HINT_MAX_SIMULTANEOUS_IMAGE_TARGETS, 4);
         targets.get(0).setName("Wheels");
         targets.get(1).setName("Tools");
-        targets.get(2).setName("Legos");
-        targets.get(3).setName("Gears");
-
+        targets.get(0).setName("Legos");
+        targets.get(0).setName("Gears");
+        //Set init location of targets
         targets.get(0).setLocation(createMatrix(0, 0, 0, 0, 0, 0));
+        targets.get(1).setLocation(createMatrix(0, 0, 0, 0, 0, 0));
+
         //Set init location of phone on brobot
         phoneLocation = createMatrix(0, 0, 0, 0, 0, 0);
 
