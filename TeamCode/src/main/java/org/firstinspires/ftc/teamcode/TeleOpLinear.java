@@ -32,12 +32,12 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorController;
 import com.qualcomm.robotcore.hardware.LegacyModule;
-import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.ServoController;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -54,7 +54,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@TeleOp(name="Linear Operations", group="Linear Opmode")  // @Autonomous(...) is the other common choice
+@TeleOp(name="Test Linear Op", group="Linear Opmode")  // @Autonomous(...) is the other common choice
 
 public class TeleOpLinear extends LinearOpMode {
 
@@ -64,12 +64,9 @@ public class TeleOpLinear extends LinearOpMode {
     private DcMotor leftMotor = null;
     private DcMotor rightMotor = null;
     private DcMotor zipMotor = null;
-
-    private Servo rightServo = null;
-    private Servo leftServo = null;
-
-
+    private DcMotor kickMotor = null;
     private DcMotorController motorCtrl = null;
+    private DcMotorController motorCtrl2 = null;
     private ServoController servoCtrl = null;
     private LegacyModule legacyMod = null;
 
@@ -82,14 +79,15 @@ public class TeleOpLinear extends LinearOpMode {
          * to 'get' must correspond to the names assigned during the robot configuration
          * step (using the FTC Robot Controller app on the phone).
          */
+
         motorCtrl = hardwareMap.dcMotorController.get("motorcycle");
+        motorCtrl2 = hardwareMap.dcMotorController.get("motorcycle2");
+        zipMotor = hardwareMap.dcMotor.get("zip motor");
+        kickMotor = hardwareMap.dcMotor.get("kick motor");
         leftMotor = hardwareMap.dcMotor.get("left motor");
         rightMotor = hardwareMap.dcMotor.get("right motor");
-        zipMotor = hardwareMap.dcMotor.get("zip motor");
         servoCtrl = hardwareMap.servoController.get("servo");
         legacyMod = hardwareMap.legacyModule.get("legacy module");
-        leftServo = hardwareMap.servo.get("left servo");
-        //rightServo = hardwareMap.servo.get("right servo");
 
         // eg: Set the drive motor directions:
         // "Reverse" the motor that runs backwards when connected directly to the battery
@@ -106,17 +104,36 @@ public class TeleOpLinear extends LinearOpMode {
             // eg: Run wheels in tank mode (note: The joystick goes negative when pushed forwards)
             leftMotor.setPower(-gamepad1.left_stick_y);
             rightMotor.setPower(gamepad1.right_stick_y);
-            //Make zipMotor collect right bumper is pressed. Shoot with left.
-            if (gamepad1.right_bumper) zipMotor.setPower(1);
-            else zipMotor.setPower(0);
-            if (gamepad1.left_bumper) zipMotor.setPower(-1);
-            else zipMotor.setPower(0);
+            zipMotor.setPower(2*gamepad1.right_trigger);
+            zipMotor.setPower(-2*gamepad1.left_trigger);
 
-            //Make servos hit left and right buttons
-            if (gamepad1.x) leftServo.setPosition(1);
-            else leftServo.setPosition(0);
-            if (gamepad1.b) rightServo.setPosition(1);
-            else rightServo.setPosition(0);
+
+           /* Commenting out old zipMotor and kickMotor assignment
+            try {
+               if (gamepad1.right_trigger>0) zipMotor.setPower(gamepad1.right_trigger);
+               else {
+                   if (gamepad1.left_trigger > 0) zipMotor.setPower(gamepad1.left_trigger);
+                   else zipMotor.setPower(0);
+               }
+           }
+            catch(IllegalArgumentException eg){
+                throw eg;
+            }
+            */
+
+
+            try {
+                if (gamepad1.right_bumper) kickMotor.setPower(1);
+                else {
+                    if (gamepad1.left_bumper) kickMotor.setPower(-1);
+                    else kickMotor.setPower(0);
+                }
+            }
+
+            catch(IllegalArgumentException eg){
+                throw eg;
+            }
+
 
             telemetry.addData("Right stick y value: " + gamepad1.right_stick_y, "\n" );
             telemetry.addData("Status", "Run Time: " + runtime.toString(), "\n");
