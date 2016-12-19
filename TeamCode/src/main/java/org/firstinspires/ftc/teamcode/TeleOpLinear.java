@@ -84,6 +84,7 @@ public class TeleOpLinear extends LinearOpMode {
         motorCtrl2 = hardwareMap.dcMotorController.get("motorcycle2");
         zipMotor = hardwareMap.dcMotor.get("zip motor");
         kickMotor = hardwareMap.dcMotor.get("kick motor");
+        kickMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         leftMotor = hardwareMap.dcMotor.get("left motor");
         rightMotor = hardwareMap.dcMotor.get("right motor");
         servoCtrl = hardwareMap.servoController.get("servo");
@@ -104,8 +105,8 @@ public class TeleOpLinear extends LinearOpMode {
             // eg: Run wheels in tank mode (note: The joystick goes negative when pushed forwards)
             leftMotor.setPower(-gamepad1.left_stick_y);
             rightMotor.setPower(gamepad1.right_stick_y);
-            zipMotor.setPower(2*gamepad1.right_trigger);
-            zipMotor.setPower(-2*gamepad1.left_trigger);
+            zipMotor.setPower(4*gamepad1.right_trigger);
+            zipMotor.setPower(-4*gamepad1.left_trigger);
 
 
            /* Commenting out old zipMotor and kickMotor assignment
@@ -120,12 +121,12 @@ public class TeleOpLinear extends LinearOpMode {
                 throw eg;
             }
             */
-
+        kickMotor.setTargetPosition(1);
 
             try {
                 if (gamepad1.right_bumper) kickMotor.setPower(1);
                 else {
-                    if (gamepad1.left_bumper) kickMotor.setPower(-1);
+                    if (gamepad1.left_bumper) kickMotor.setPower(-.1);
                     else kickMotor.setPower(0);
                 }
             }
@@ -134,7 +135,7 @@ public class TeleOpLinear extends LinearOpMode {
                 throw eg;
             }
 
-
+            telemetry.addData("kickMotor position:" + kickMotor.getTargetPosition(),"\n");
             telemetry.addData("Right stick y value: " + gamepad1.right_stick_y, "\n" );
             telemetry.addData("Status", "Run Time: " + runtime.toString(), "\n");
             telemetry.update();
