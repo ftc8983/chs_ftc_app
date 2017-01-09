@@ -54,7 +54,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@TeleOp(name="Test Linear Op", group="Linear Opmode")  // @Autonomous(...) is the other common choice
+@TeleOp(name="Test Linear OpMode", group="Linear Opmode")  // @Autonomous(...) is the other common choice
 
 public class TeleOpLinear extends LinearOpMode {
 
@@ -70,10 +70,17 @@ public class TeleOpLinear extends LinearOpMode {
     private ServoController servoCtrl = null;
     private LegacyModule legacyMod = null;
 
+    static final double     LAUNCH_SPEED = .1;
+    static final double     RETURN_SPEED = -0.1;
+
     @Override
     public void runOpMode() throws InterruptedException {
         telemetry.addData("Status", "Initialized");
         telemetry.update();
+
+        kickMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        kickMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        kickMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         /* eg: Initialize the hardware variables. Note that the strings used here as parameters
          * to 'get' must correspond to the names assigned during the robot configuration
@@ -84,7 +91,6 @@ public class TeleOpLinear extends LinearOpMode {
         motorCtrl2 = hardwareMap.dcMotorController.get("motorcycle2");
         zipMotor = hardwareMap.dcMotor.get("zip motor");
         kickMotor = hardwareMap.dcMotor.get("kick motor");
-        kickMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         leftMotor = hardwareMap.dcMotor.get("left motor");
         rightMotor = hardwareMap.dcMotor.get("right motor");
         servoCtrl = hardwareMap.servoController.get("servo");
@@ -124,9 +130,13 @@ public class TeleOpLinear extends LinearOpMode {
         kickMotor.setTargetPosition(1);
 
             try {
-                if (gamepad1.right_bumper) kickMotor.setPower(1);
+                if (gamepad1.right_bumper){
+                    kickMotor.setPower(LAUNCH_SPEED);
+                }
                 else {
-                    if (gamepad1.left_bumper) kickMotor.setPower(-.1);
+                    if (gamepad1.left_bumper) {
+                        kickMotor.setPower(RETURN_SPEED);
+                    }
                     else kickMotor.setPower(0);
                 }
             }
@@ -134,6 +144,10 @@ public class TeleOpLinear extends LinearOpMode {
             catch(IllegalArgumentException eg){
                 throw eg;
             }
+
+            telemetry.addData("Path0",  "Starting at %7d :%7d",
+                    kickMotor.getCurrentPosition());
+            telemetry.update();
 
             telemetry.addData("kickMotor position:" + kickMotor.getTargetPosition(),"\n");
             telemetry.addData("Right stick y value: " + gamepad1.right_stick_y, "\n" );
