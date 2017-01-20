@@ -116,13 +116,13 @@ public class TeleOpLinear extends LinearOpMode {
             else if (gamepad1.left_trigger > 0) zipMotor.setPower(-gamepad1.left_trigger);
             else zipMotor.setPower(0);
 
-            //Ziptie motor
+            //kickMotor
             if (gamepad1.right_bumper) {
-                kickMotor.setTargetPosition(kickMotor.getCurrentPosition()-200);
+                kickMotor.setTargetPosition((kickMotor.getCurrentPosition()) - 200);
                 kickMotor.setPower(LAUNCH_SPEED);
             }
             else if (gamepad1.left_bumper) {
-                kickMotor.setTargetPosition(kickMotor.getCurrentPosition()+200);
+                kickMotor.setTargetPosition(200);
                 kickMotor.setPower(RETURN_SPEED);
             }
 
