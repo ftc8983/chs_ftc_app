@@ -126,6 +126,8 @@ public class TeleOpLinear extends LinearOpMode {
                     kickMotor.setPower(LAUNCH_SPEED);
                 }
                 kickMotor.setPower(0);
+            }
+            if (kickMotor.getCurrentPosition()> kickMotor.getTargetPosition()+150) {
                 this.a = false;
             }
             /*
