@@ -72,6 +72,7 @@ public class TeleOpLinear extends LinearOpMode {
 
     static final double LAUNCH_SPEED = 100;
     static final double RETURN_SPEED = .1;
+    private boolean a = false;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -118,12 +119,14 @@ public class TeleOpLinear extends LinearOpMode {
             else zipMotor.setPower(0);
 
             //kickMotor
-            if (gamepad1.right_bumper) {
+            if (gamepad1.right_bumper && !a) {
+                this.a = true;
                 kickMotor.setTargetPosition(kickMotor.getCurrentPosition() - 200);
                 while(Math.abs(kickMotor.getCurrentPosition()-kickMotor.getTargetPosition())>10) {
                     kickMotor.setPower(LAUNCH_SPEED);
                 }
                 kickMotor.setPower(0);
+                this.a = false;
             }
             /*
             else if (gamepad1.left_bumper) {
