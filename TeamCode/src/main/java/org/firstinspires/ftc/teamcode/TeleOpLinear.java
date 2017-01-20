@@ -70,7 +70,7 @@ public class TeleOpLinear extends LinearOpMode {
     private ServoController servoCtrl = null;
     private LegacyModule legacyMod = null;
 
-    static final double LAUNCH_SPEED = 10;
+    static final double LAUNCH_SPEED = 100;
     static final double RETURN_SPEED = .1;
 
     @Override
@@ -103,6 +103,7 @@ public class TeleOpLinear extends LinearOpMode {
         waitForStart();
         runtime.reset();
         kickMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        kickMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
 
@@ -118,13 +119,21 @@ public class TeleOpLinear extends LinearOpMode {
 
             //kickMotor
             if (gamepad1.right_bumper) {
-                kickMotor.setTargetPosition(kickMotor.getCurrentPosition()-200);
-                kickMotor.setPower(LAUNCH_SPEED);
+                while(Math.abs(kickMotor.getCurrentPosition()-kickMotor.getTargetPosition())>10) {
+                    kickMotor.setTargetPosition(kickMotor.getCurrentPosition() - 200);
+                    kickMotor.setPower(LAUNCH_SPEED);
+                }
+                kickMotor.setPower(0);
             }
+            /*
             else if (gamepad1.left_bumper) {
-                kickMotor.setTargetPosition(kickMotor.getCurrentPosition()+200);
-                kickMotor.setPower(RETURN_SPEED);
+                while(Math.abs(kickMotor.getCurrentPosition()-kickMotor.getTargetPosition())>10) {
+                    kickMotor.setTargetPosition(kickMotor.getCurrentPosition() + 220);
+                    kickMotor.setPower(RETURN_SPEED);
+                }
+                kickMotor.setPower(0);
             }
+            */
 
             telemetry.addData("Target Position", ":" + kickMotor.getTargetPosition());
             telemetry.addData("Current Position", ":" + kickMotor.getCurrentPosition());
