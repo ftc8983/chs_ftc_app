@@ -70,7 +70,7 @@ public class TeleOpLinear extends LinearOpMode {
     private ServoController servoCtrl = null;
     private LegacyModule legacyMod = null;
 
-    static final double LAUNCH_SPEED = 3;
+    static final double LAUNCH_SPEED = 10;
     static final double RETURN_SPEED = .1;
 
     @Override
@@ -118,15 +118,12 @@ public class TeleOpLinear extends LinearOpMode {
 
             //Ziptie motor
             if (gamepad1.right_bumper) {
-                while (Math.abs(kickMotor.getCurrentPosition()-kickMotor.getTargetPosition())>10) {
-                    kickMotor.setTargetPosition(-200);
-                    kickMotor.setPower(LAUNCH_SPEED);
-                }
-                kickMotor.setPower(0);
+                kickMotor.setPower(LAUNCH_SPEED);
+                kickMotor.setTargetPosition(kickMotor.getCurrentPosition()-200);
             }
             else if (gamepad1.left_bumper) {
-                kickMotor.setTargetPosition(kickMotor.getCurrentPosition()+200);
                 kickMotor.setPower(RETURN_SPEED);
+                kickMotor.setTargetPosition(kickMotor.getCurrentPosition()+200);
             }
 
             telemetry.addData("Target Position", ":" + kickMotor.getTargetPosition());
