@@ -102,7 +102,7 @@ public class TeleOpLinear extends LinearOpMode {
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
         runtime.reset();
-
+        kickMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
 
@@ -119,19 +119,19 @@ public class TeleOpLinear extends LinearOpMode {
             //Ziptie motor
             if (gamepad1.right_bumper) {
                 kickMotor.setTargetPosition(1);
-                kickMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
                 kickMotor.setPower(LAUNCH_SPEED);
             }
             else if(kickMotor.getTargetPosition() > 0) {
                 kickMotor.setTargetPosition(0);
-                kickMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 kickMotor.setPower(RETURN_SPEED);
             }
             else {
                 kickMotor.setPower(0);
             }
 
-
+            telemetry.addData("Target Position", ":" + kickMotor.getTargetPosition());
+            telemetry.addData("Current Position", ":" + kickMotor.getCurrentPosition());
             telemetry.addData("Status", "Run Time: " + runtime.toString(), "\n");
             telemetry.update();
             idle(); // Let hardware catch up
