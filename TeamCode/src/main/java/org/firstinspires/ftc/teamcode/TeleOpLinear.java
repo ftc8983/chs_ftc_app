@@ -118,11 +118,11 @@ public class TeleOpLinear extends LinearOpMode {
 
             //kickMotor
             if (gamepad1.right_bumper) {
-                kickMotor.setTargetPosition((kickMotor.getCurrentPosition()) - 200);
+                kickMotor.setTargetPosition(kickMotor.getCurrentPosition()-200);
                 kickMotor.setPower(LAUNCH_SPEED);
             }
             else if (gamepad1.left_bumper) {
-                kickMotor.setTargetPosition(200);
+                kickMotor.setTargetPosition(kickMotor.getCurrentPosition()+200);
                 kickMotor.setPower(RETURN_SPEED);
             }
 
