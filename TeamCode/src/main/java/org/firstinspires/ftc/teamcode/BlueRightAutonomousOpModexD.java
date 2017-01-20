@@ -65,12 +65,13 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
 public class BlueRightAutonomousOpModexD extends LinearOpMode {
 
     /* Declare OpMode members. */
-    ColorSensor colorSensor1;  // Hardware Device Object
+
     ColorSensor colorSensorDown;  // Hardware Device Object
 
     private ElapsedTime runtime = new ElapsedTime();
     private DcMotor leftMotor = null;
     private DcMotor rightMotor = null;
+    private ColorSensor colorSensor = null;
     private DcMotor zipMotor = null;
     private DcMotorController motorCtrl = null;
     private ServoController servoCtrl = null;
@@ -125,7 +126,7 @@ public class BlueRightAutonomousOpModexD extends LinearOpMode {
         servoCtrl = hardwareMap.servoController.get("servo");
         legacyMod = hardwareMap.legacyModule.get("legacy module");
         zipMotor = hardwareMap.dcMotor.get("zip motor");
-        colorSensor1 = hardwareMap.colorSensor.get("color sensor 1");
+        colorSensor = hardwareMap.colorSensor.get("color sensor 1");
         colorSensorDown = hardwareMap.colorSensor.get("color sensor down");
         //Unrelated But Useful Notes Below
         // eg: Set the drive motor directions:
@@ -148,7 +149,7 @@ public class BlueRightAutonomousOpModexD extends LinearOpMode {
         boolean bLedOn = true;
 
         // turn the LED on in the beginning, just so user will know that the sensor is active.
-        colorSensor1.enableLed(bLedOn);
+        colorSensor.enableLed(bLedOn);
         //** End of Color Sensor Stuff
 
 
@@ -252,22 +253,22 @@ public class BlueRightAutonomousOpModexD extends LinearOpMode {
 // ** Color Sensor whileActive Stuff
 
             telemetry.addData("LED", bLedOn ? "On" : "Off");
-            telemetry.addData("Clear", colorSensor1.alpha());
-            telemetry.addData("Red  ", colorSensor1.red());
-            telemetry.addData("Green", colorSensor1.green());
-            telemetry.addData("Blue ", colorSensor1.blue());
+            telemetry.addData("Clear", colorSensor.alpha());
+            telemetry.addData("Red  ", colorSensor.red());
+            telemetry.addData("Green", colorSensor.green());
+            telemetry.addData("Blue ", colorSensor.blue());
 
 
 /**
             // convert the RGB values to HSV values.
-            Color.RGBToHSV(colorSensor1.red(), colorSensor1.green(), colorSensor1.blue(), hsvValues);
+            Color.RGBToHSV(colorSensor.red(), colorSensor.green(), colorSensor.blue(), hsvValues);
 
             // send the info back to driver station using telemetry function.
             telemetry.addData("LED", bLedOn ? "On" : "Off");
-            telemetry.addData("Clear", colorSensor1.alpha());
-            telemetry.addData("Red  ", colorSensor1.red());
-            telemetry.addData("Green", colorSensor1.green());
-            telemetry.addData("Blue ", colorSensor1.blue());
+            telemetry.addData("Clear", colorSensor.alpha());
+            telemetry.addData("Red  ", colorSensor.red());
+            telemetry.addData("Green", colorSensor.green());
+            telemetry.addData("Blue ", colorSensor.blue());
             telemetry.addData("Hue", hsvValues[0]);
 
             // change the background color to match the color detected by the RGB sensor.
