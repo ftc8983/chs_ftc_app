@@ -54,7 +54,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@TeleOp(name="Test Linear OpMode", group="Linear Opmode")  // @Autonomous(...) is the other common choice
+@TeleOp(name="Test Linear Op", group="Linear Opmode")  // @Autonomous(...) is the other common choice
 
 public class TeleOpLinear extends LinearOpMode {
 
@@ -70,17 +70,13 @@ public class TeleOpLinear extends LinearOpMode {
     private ServoController servoCtrl = null;
     private LegacyModule legacyMod = null;
 
-    static final double     LAUNCH_SPEED = .1;
-    static final double     RETURN_SPEED = -0.1;
+    static final double LAUNCH_SPEED = .1;
+    static final double RETURN_SPEED = .01;
 
     @Override
     public void runOpMode() throws InterruptedException {
         telemetry.addData("Status", "Initialized");
         telemetry.update();
-
-        kickMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        kickMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        kickMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         /* eg: Initialize the hardware variables. Note that the strings used here as parameters
          * to 'get' must correspond to the names assigned during the robot configuration
@@ -95,6 +91,8 @@ public class TeleOpLinear extends LinearOpMode {
         rightMotor = hardwareMap.dcMotor.get("right motor");
         servoCtrl = hardwareMap.servoController.get("servo");
         legacyMod = hardwareMap.legacyModule.get("legacy module");
+
+        kickMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         // eg: Set the drive motor directions:
         // "Reverse" the motor that runs backwards when connected directly to the battery
@@ -111,46 +109,29 @@ public class TeleOpLinear extends LinearOpMode {
             // eg: Run wheels in tank mode (note: The joystick goes negative when pushed forwards)
             leftMotor.setPower(-gamepad1.left_stick_y);
             rightMotor.setPower(gamepad1.right_stick_y);
-            zipMotor.setPower(4*gamepad1.right_trigger);
-            zipMotor.setPower(-4*gamepad1.left_trigger);
 
 
-           /* Commenting out old zipMotor and kickMotor assignment
-            try {
-               if (gamepad1.right_trigger>0) zipMotor.setPower(gamepad1.right_trigger);
-               else {
-                   if (gamepad1.left_trigger > 0) zipMotor.setPower(gamepad1.left_trigger);
-                   else zipMotor.setPower(0);
-               }
-           }
-            catch(IllegalArgumentException eg){
-                throw eg;
+            //Make the ziptie motor usable
+            if (gamepad1.right_trigger > 0) zipMotor.setPower(gamepad1.right_trigger);
+            else if (gamepad1.left_trigger > 0) zipMotor.setPower(-gamepad1.left_trigger);
+            else zipMotor.setPower(0);
+
+            //Ziptie motor
+            if (gamepad1.right_bumper) {
+                kickMotor.setTargetPosition(1);
+                kickMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                kickMotor.setPower(LAUNCH_SPEED);
             }
-            */
-        kickMotor.setTargetPosition(1);
-
-            try {
-                if (gamepad1.right_bumper){
-                    kickMotor.setPower(LAUNCH_SPEED);
-                }
-                else {
-                    if (gamepad1.left_bumper) {
-                        kickMotor.setPower(RETURN_SPEED);
-                    }
-                    else kickMotor.setPower(0);
-                }
+            else if(kickMotor.getTargetPosition() > 0) {
+                kickMotor.setTargetPosition(0);
+                kickMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                kickMotor.setPower(RETURN_SPEED);
+            }
+            else {
+                kickMotor.setPower(0);
             }
 
-            catch(IllegalArgumentException eg){
-                throw eg;
-            }
 
-            telemetry.addData("Path0",  "Starting at %7d :%7d",
-                    kickMotor.getCurrentPosition());
-            telemetry.update();
-
-            telemetry.addData("kickMotor position:" + kickMotor.getTargetPosition(),"\n");
-            telemetry.addData("Right stick y value: " + gamepad1.right_stick_y, "\n" );
             telemetry.addData("Status", "Run Time: " + runtime.toString(), "\n");
             telemetry.update();
             idle(); // Let hardware catch up
